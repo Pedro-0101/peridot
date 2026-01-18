@@ -1,12 +1,11 @@
 package main
 
 import (
+	"log"
 	"log/slog"
 
-	"github.com/Pedro-0101/peridot/internal/controllers"
 	"github.com/Pedro-0101/peridot/internal/db"
-	"github.com/Pedro-0101/peridot/internal/repositories"
-	"github.com/Pedro-0101/peridot/internal/usecases"
+	"github.com/Pedro-0101/peridot/internal/routes"
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,9 +20,7 @@ func main() {
 	}
 	defer dbConnection.Close()
 
-	userRepo := repositories.NewUserRepository(dbConnection)
-	userUseCase := usecases.NewUserUseCase(userRepo)
-	userCtrl := controllers.NewUserController(userUseCase)
+	routes.InitRoutes(&server.RouterGroup, dbConnection)
 
 	server.GET("/ping", func(ctx *gin.Context) {
 		ctx.JSON(200, gin.H{
@@ -31,8 +28,7 @@ func main() {
 		})
 	})
 
-	server.POST("/users", userCtrl.CreateUser)
-	server.GET("/users", userCtrl.GetAllUsers)
-
-	server.Run(":8008")
+	if err := server.Run(":8008"); err != nil {
+		log.Fatal(err)
+	}
 }

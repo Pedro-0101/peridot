@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"database/sql"
+	"fmt"
 
 	users "github.com/Pedro-0101/peridot/internal/models/user"
 )
@@ -54,4 +55,28 @@ func (r *UserRepository) GetAllUsers() ([]users.User, error) {
 	}
 
 	return allUsers, nil
+}
+
+func (r *UserRepository) GetUserById(id string) (users.User, error) {
+	query := `SELECT id, username, user_email, created_at, updated_at FROM users WHERE id = $1`
+
+	var u users.User
+
+	err := r.connection.QueryRow(query, id).Scan(
+		&u.ID,
+		&u.Name,
+		&u.Email,
+		&u.CreatedAt,
+		&u.UpdatedAt,
+	)
+
+	if err != nil {
+		// Se não encontrar ninguém, o Go retorna este erro específico
+		if err == sql.ErrNoRows {
+			return users.User{}, fmt.Errorf("usuário não encontrado")
+		}
+		return users.User{}, err
+	}
+
+	return u, nil
 }
