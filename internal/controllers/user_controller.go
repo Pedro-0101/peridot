@@ -7,15 +7,14 @@ import (
 )
 
 type UserController struct {
-	CreateUserUC  *usecases.CreateUserUseCase
-	GetAllUsersUC *usecases.GetAllUsersUseCase
+	UserUseCase *usecases.UserUseCase
 }
 
-func NewUserController(createUsercaUC *usecases.CreateUserUseCase, getAllUsers *usecases.GetAllUsersUseCase) *UserController {
-	return &UserController{CreateUserUC: createUsercaUC, GetAllUsersUC: getAllUsers}
+func NewUserController(uuc *usecases.UserUseCase) *UserController {
+	return &UserController{UserUseCase: uuc}
 }
 
-func (c *UserController) Create(ctx *gin.Context) {
+func (c *UserController) CreateUser(ctx *gin.Context) {
 	var u users.User
 
 	if err := ctx.ShouldBindJSON(&u); err != nil {
@@ -23,7 +22,7 @@ func (c *UserController) Create(ctx *gin.Context) {
 		return
 	}
 
-	if err := c.CreateUserUC.Execute(&u); err != nil {
+	if err := c.UserUseCase.CreateUser(&u); err != nil {
 		ctx.JSON(500, gin.H{"error": "Error on create user"})
 		return
 	}
@@ -32,7 +31,7 @@ func (c *UserController) Create(ctx *gin.Context) {
 }
 
 func (c *UserController) GetAllUsers(ctx *gin.Context) {
-	users, err := c.GetAllUsersUC.Execute()
+	users, err := c.UserUseCase.GetAllUsers()
 
 	if err != nil {
 		ctx.JSON(500, gin.H{"error": "Error on search users"})

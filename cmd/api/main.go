@@ -11,7 +11,6 @@ import (
 )
 
 func main() {
-	slog.Info("Iniciando api...")
 
 	server := gin.Default()
 
@@ -23,9 +22,8 @@ func main() {
 	defer dbConnection.Close()
 
 	userRepo := repositories.NewUserRepository(dbConnection)
-	createUserUC := usecases.NewCreateUserUseCase(userRepo)
-	getAllUserUC := usecases.NewGetAllUserUseCase(userRepo)
-	userCtrl := controllers.NewUserController(createUserUC, getAllUserUC)
+	userUseCase := usecases.NewUserUseCase(userRepo)
+	userCtrl := controllers.NewUserController(userUseCase)
 
 	server.GET("/ping", func(ctx *gin.Context) {
 		ctx.JSON(200, gin.H{
@@ -33,7 +31,7 @@ func main() {
 		})
 	})
 
-	server.POST("/users", userCtrl.Create)
+	server.POST("/users", userCtrl.CreateUser)
 	server.GET("/users", userCtrl.GetAllUsers)
 
 	server.Run(":8008")

@@ -8,21 +8,24 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type CreateUserUseCase struct {
+type UserUseCase struct {
 	Repo *repositories.UserRepository
 }
 
-func NewCreateUserUseCase(repo *repositories.UserRepository) *CreateUserUseCase {
-	return &CreateUserUseCase{Repo: repo}
+func NewUserUseCase(repo *repositories.UserRepository) *UserUseCase {
+	return &UserUseCase{Repo: repo}
 }
 
-func (uc *CreateUserUseCase) Execute(u *users.User) error {
+func (uuc *UserUseCase) CreateUser(u *users.User) error {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(u.Pass), bcrypt.DefaultCost)
 	if err != nil {
 		return errors.New("Erro ao processar senha")
 	}
 	u.Pass = string(hashedPassword)
 
-	return uc.Repo.CreateUser(u)
+	return uuc.Repo.CreateUser(u)
+}
 
+func (uc *UserUseCase) GetAllUsers() ([]users.User, error) {
+	return uc.Repo.GetAllUsers()
 }
