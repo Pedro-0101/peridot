@@ -28,3 +28,30 @@ func (r *UserRepository) CreateUser(u *users.User) error {
 		u.Pass,
 	).Scan(&u.ID, &u.CreatedAt, &u.UpdatedAt)
 }
+
+func (r *UserRepository) GetAllUsers() ([]users.User, error) {
+	query := `SELECT id, username, user_email, created_at, updated_at FROM users`
+
+	rows, err := r.connection.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var allUsers []users.User
+
+	for rows.Next() {
+		var u users.User
+		err := rows.Scan(&u.ID, &u.Name, &u.Email, &u.CreatedAt, &u.UpdatedAt)
+		if err != nil {
+			return nil, err
+		}
+		allUsers = append(allUsers, u)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return allUsers, nil
+}

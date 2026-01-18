@@ -6,6 +6,7 @@ import (
 	"github.com/Pedro-0101/peridot/internal/controllers"
 	"github.com/Pedro-0101/peridot/internal/db"
 	"github.com/Pedro-0101/peridot/internal/repositories"
+	"github.com/Pedro-0101/peridot/internal/usecases"
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,7 +23,9 @@ func main() {
 	defer dbConnection.Close()
 
 	userRepo := repositories.NewUserRepository(dbConnection)
-	userCtrl := controllers.NewUserController(userRepo)
+	createUserUC := usecases.NewCreateUserUseCase(userRepo)
+	getAllUserUC := usecases.NewGetAllUserUseCase(userRepo)
+	userCtrl := controllers.NewUserController(createUserUC, getAllUserUC)
 
 	server.GET("/ping", func(ctx *gin.Context) {
 		ctx.JSON(200, gin.H{
@@ -31,6 +34,7 @@ func main() {
 	})
 
 	server.POST("/users", userCtrl.Create)
+	server.GET("/users", userCtrl.GetAllUsers)
 
 	server.Run(":8008")
 }
