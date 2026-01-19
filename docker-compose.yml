@@ -3,9 +3,9 @@ services:
     container_name: go_db
     image: postgres:18
     environment:
-      POSTGRES_PASSWORD: 1234
-      POSTGRES_USER: postgres
-      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: "${DATABASE_PORT}"
+      POSTGRES_USER: "${DATABASE_USER}"
+      POSTGRES_DB: "${DATABASE_NAME}"
     ports:
       - "5432:5432"
     volumes:
