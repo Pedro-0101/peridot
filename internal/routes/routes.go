@@ -17,7 +17,7 @@ func InitRoutes(r *gin.RouterGroup, dbConnection *sql.DB) {
 
 	r.POST("/users", userCtrl.CreateUser)
 	r.GET("/users", userCtrl.GetAllUsers)
-	r.GET("/user:id", userCtrl.GetUserById)
-	r.PUT("/user:id", userCtrl.UpdateUser)
-	r.DELETE("/user:id", userCtrl.DeleteUser)
+	r.GET("/users/:id", userCtrl.GetUserById)
+	r.PUT("/users/:id", userCtrl.UpdateUser)
+	r.DELETE("/users/:id", userCtrl.DeleteUser)
 }

@@ -31,13 +31,5 @@ func (s *userService) UpdateUser(id string, newUser request.UserRequest) (*respo
 		return nil, resterr.NewInternalServerError("Error: Error updating user")
 	}
 
-	responseUser := &response.UserResponse{
-		ID:        updateUser.ID,
-		Name:      updateUser.Name,
-		Email:     updateUser.Email,
-		CreatedAt: updateUser.CreatedAt,
-		UpdatedAt: updateUser.UpdatedAt,
-	}
-
-	return responseUser, nil
+	return s.GetUserById(id)
 }
